@@ -47,11 +47,71 @@ Expr.Table.F50 <- filter_missingvalues(Expr.Table, 50)
 
 
 ###########################
-# Unsupervised clustering of the samples
+# Compare dynamic tree cut and constant height cut
 ###########################
 
 distM <- dist(scale(t(Expr.Table.F50)),method = "euclidean")
 hc <- hclust(distM, "complete")
+
+set.seed(12345)
+Sample.Clusters.C<- data.frame(Name = colnames(Expr.Table.F50),
+                               Cluster = cutree(hc, k=12),
+                               row.names = colnames(Expr.Table.F50))
+Annotation$Constant.height.cut <- Sample.Clusters.C[Annotation$UniqueID,"Cluster"]
+
+Annotation$Constant.height.cut <- factor(Annotation$Constant.height.cut, levels =
+                                           c("1","2","3","4","5","6","7","8","9","10","11",
+                                             "12"))
+
+set.seed(12345)
+Sample.Clusters.D<- data.frame(Name = colnames(Expr.Table.F50),
+                             Cluster = cutreeDynamic(hc, minClusterSize=0, method="hybrid",
+                                                     distM=as.matrix(distM, deepSplit=4, 
+                                                                     maxCoreScatter=NULL, minGap=NULL, 
+                                                                     maxAbsCoreScatter=NULL, minAbsGap=NULL)),
+                             row.names = colnames(Expr.Table.F50))
+
+Annotation$Dynamic.cut <- Sample.Clusters.D[Annotation$UniqueID,"Cluster"]
+
+column.ha.cluster <- create_column_ha(Annotation, 
+                                      c("Constant.height.cut","Dynamic.cut"), 
+                                      colorlist)
+
+draw(Heatmap(t(scale(t(Expr.Table.F50))), 
+             name="Z-score",
+             col=colorRamp2(c(-4, 0, 4), c("blue","white", "red")),
+             cluster_rows = F, top_annotation = column.ha.cluster, 
+             cluster_columns = T,
+             show_row_names = F, 
+             show_heatmap_legend =F, 
+             show_column_names = T,
+             row_title = NULL,
+             column_names_gp = gpar(fontsize = 10),
+             row_names_gp = gpar(fontsize = 10),
+             height  = unit(0.01, "cm")),
+     annotation_legend_side="bottom")
+
+
+pdf(file="Constant_vs_Dynamic_Cut.pdf",width = 15, height = 5)
+draw(Heatmap(t(scale(t(Expr.Table.F50))), 
+             name="Z-score",
+             col=colorRamp2(c(-4, 0, 4), c("blue","white", "red")),
+             cluster_rows = F, top_annotation = column.ha.cluster, 
+             cluster_columns = T,
+             show_row_names = F, 
+             show_heatmap_legend =F, 
+             show_column_names = T,
+             row_title = NULL,
+             column_names_gp = gpar(fontsize = 10),
+             row_names_gp = gpar(fontsize = 10),
+             height  = unit(0.01, "cm")),
+     annotation_legend_side="bottom")
+dev.off()
+
+###########################
+# Unsupervised clustering of the samples with dynamic tree cut
+###########################
+
 set.seed(12345)
 Sample.Clusters<- data.frame(Name = colnames(Expr.Table.F50),
                              Cluster = cutreeDynamic(hc, minClusterSize=0, method="hybrid",

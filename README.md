@@ -2,9 +2,9 @@
 
 This is the custom R code used for the proteomic data analysis in:
 
-Szadai, L., Velasquez, E. et al. (2021). Deep Proteomic Analysis on Paraffine-Archived Melanoma with Prognostic/Predictive Biomarker read-out. Manuscript submitted for publication.
+Szadai, L., Velasquez, E. et al. (2021). Deep Proteomic Analysis on Paraffine-Archived Melanoma with Prognostic/Predictive Biomarker read-out. Manuscript accepted for publication.
 
-**This repository consists of 5 scripts used for analysis and plotting of proteomic data:**
+**This repository consists of 7 scripts used for analysis and plotting of proteomic data:**
 
 | Script name  | Description  |
 |---|---|
